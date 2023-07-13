@@ -1,4 +1,9 @@
 import { ethers } from "ethers";
+import dotenv from "dotenv";
+dotenv.config();
+
+const PK = process.env.PK as string;
+const ZK_RPC = process.env.ZK_TESTNET_RPC as string;
 
 const { Network, Alchemy, Wallet, Utils } = require("alchemy-sdk");
 
@@ -10,7 +15,7 @@ const alchemy = new Alchemy(settings);
 
 async function getBalance() {
   const balance = await alchemy.core.getBalance(
-    "0xF8B56939fF7246142211Ab7b136EB2Ea061046e5",
+    "0xD3564d4C3cE55D4cB9694CDAcE90547F7e7c8628",
     "latest"
   );
   console.log("Balance of Specific Address:");
@@ -42,33 +47,35 @@ async function getTransactionByHash() {
 getTransactionByHash();
 
 async function sendTransaction() {
-  // Creating a new wallet instance
-  const wallet = new Wallet(
-    "XXXXXXXXXXXXXX" // inster your private key here
-  );
+  // Configurar proveedor de red
+  const provider = new ethers.providers.JsonRpcProvider(ZK_RPC);
 
-  console.log("Wallet Address:", wallet.getAddress());
+  // Dirección del remitente
+  const senderAddress = "0xD3564d4C3cE55D4cB9694CDAcE90547F7e7c8628";
 
-  // creating the transaction object
+  // Dirección del destinatario
+  const recipientAddress = "0x8b5E7E4C2dfa1fFB078b11fb4Ea226cBb9545b2B";
+
+  // Valor a transferir (en wei)
+  const value = ethers.utils.parseEther("0.0001");
+
+  // Crear una instancia de la cartera con la clave privada
+  const wallet = new ethers.Wallet(PK, provider);
+
+  // Crear la transacción
   const transaction = {
-    to: "0xAE13fCFb77eb02361C196e30105E91867AfaC369",
-    value: ethers.utils.parseEther("0.001"),
-    gasLimit: "21000",
-    maxPriorityFeePerGas: ethers.utils.parseUnits("5", "gwei"),
-    maxFeePerGas: ethers.utils.parseUnits("20", "gwei"),
-    nonce: await alchemy.core.getTransactionCount(wallet.getAddress()),
-    type: 2,
-    chainId: 1442,
+    to: recipientAddress,
+    value: value,
+    gasLimit: 21000,
   };
 
-  // signing the transaction
-  const rawTransaction = await wallet.signTransaction(transaction);
+  // Firmar la transacción
+  const signedTransaction = await wallet.signTransaction(transaction);
 
-  // sending the transaction
-  let sentTx = await alchemy.transact.sendTransaction(rawTransaction);
-  console.log("Sending Transaction");
-  // Logging the sent tx object
-  console.log(sentTx);
+  // Enviar la transacción firmada
+  const transactionResponse = await provider.sendTransaction(signedTransaction);
+
+  console.log("Transaction hash:", transactionResponse.hash);
 }
 
 sendTransaction();
