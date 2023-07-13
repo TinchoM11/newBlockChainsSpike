@@ -1,0 +1,24 @@
+{
+  "name": "blockchains",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@maticnetwork/maticjs": "^3.6.1",
+    "@maticnetwork/maticjs-ethers": "^1.0.3",
+    "@mysten/sui.js": "^0.37.1",
+    "@sei-js/core": "^1.4.0",
+    "@sei-js/react": "^2.0.2",
+    "@vividnetwork/swap-sdk": "^0.2.2",
+    "alchemy-sdk": "^2.9.2",
+    "aptos": "^1.13.1",
+    "dotenv": "^16.3.1",
+    "ethers": "^5.7.2",
+    "text-encoding-utf-8": "^1.0.2"
+  }
+}
