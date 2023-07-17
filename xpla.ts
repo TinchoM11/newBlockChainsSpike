@@ -60,9 +60,9 @@ async function xpla() {
 
   // Get Token Balance
   const tokenAddress =
-    "xpla14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9s525s0h"; // Acount Random with balance
+    "xpla14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9s525s0h";
   const walletAdd =
-    "xpla104yd6mjyfx90swm022h9t37g2c2ar2w7zkcee5qlkrfrdge0ka9qhesxhp";
+    "xpla104yd6mjyfx90swm022h9t37g2c2ar2w7zkcee5qlkrfrdge0ka9qhesxhp";  // Acount Random with balance
   const response = await lcd.wasm.contractQuery(tokenAddress, {
     balance: { address: walletAdd },
   });
@@ -95,7 +95,6 @@ async function xpla() {
   const tokenContractAddress =
     "xpla1v2ezcmgzmvwdtp9m0nyfy38p85dnkn0excnyy6dqylm65fhft0qsrzmktv";
 
-  // Transfer 1 TEST.
   const cw20Send = new MsgExecuteContract(
     recoveredAccountAccesKey,
     tokenContractAddress,
@@ -113,8 +112,8 @@ async function xpla() {
   console.log("Token Tx Result:", tokenTxResult);
 }
 
-//xpla();
-swapping();
+xpla();
+//swapping();
 
 async function swapping() {
   // Fetching Gas Prices
