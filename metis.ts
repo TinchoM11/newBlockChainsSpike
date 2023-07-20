@@ -5,6 +5,7 @@
 require("dotenv").config();
 import { ethers } from "ethers";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
+import { getPrice } from "./pricesApi";
 
 const RPC_TESTNET = process.env.METIS_TESTNET_RPC as string;
 const PK_TESTNET = process.env.PK_METIS as string;
@@ -33,7 +34,10 @@ async function main() {
   const walletWithBalance = new ethers.Wallet(PK_TESTNET, provider);
   const balance = await provider.getBalance(walletWithBalance.address);
   console.log("Balance: " + ethers.utils.formatEther(balance));
-
+  const metisPrice = Number(await getPrice("METIS"));
+  const nativeBalanceInUsd =
+    parseFloat(ethers.utils.formatEther(balance)) * metisPrice;
+  console.log("Balance in USDC:", nativeBalanceInUsd);
   // Get Balance of a Token
   console.log("---------- Get Balance of a Token ----------");
   const contractAddress = "0x176dd192f2f6505ad99204ff83561bac6d7f6d4b";
@@ -48,6 +52,12 @@ async function main() {
   console.log(
     `Balance of ${symbol}: ${ethers.utils.formatUnits(balanceToken, decimals)}`
   );
+
+  const tokenPriceInUsd = Number(await getPrice(symbol));
+  const tokenBalanceInUsd =
+    parseFloat(ethers.utils.formatEther(balanceToken)) * tokenPriceInUsd;
+
+  console.log("Balance in USD of Token:", tokenBalanceInUsd);
 
   // Sending a Transaction of Native Token
   console.log("---------- Sending a Transaction of Native Token ----------");
