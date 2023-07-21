@@ -1,4 +1,5 @@
 // @ts-nocheck
+import axios from "axios";
 const { PrivateKey } = require("bitcore-lib");
 const { mainnet, testnet } = require("bitcore-lib/lib/networks");
 const Mnemonic = require("bitcore-mnemonic");
@@ -49,7 +50,15 @@ const createHDWallet = async (network: string = testnet) => {
   };
 };
 
-const sendBTC = () => {
+const sendBTC = async () => {
+  const address = "mmoGnzGcM3Y2DjYB3TCCax5Q34XyXtUNFb";
+  const balance = await axios({
+    method: "GET",
+    url: `https://blockstream.info/testnet/api/address/${address}/utxo`,
+  })
+
+  console.log("BTC Balance", balance.data[0].value);
+
   sendBitcoin("myZvykScusEBvp6TE2WQqhF72x48wNitgk", 0.0001)
     .then((result) => {
       console.log("Transaction Hash:", result);
