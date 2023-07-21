@@ -3,18 +3,19 @@ import axios from "axios";
 require("dotenv").config();
 
 const CoinMarketCapApiKey = process.env.COIN_MARKET_CAP_API_KEY;
+
 export async function getPrice(symbol: string) {
   // Get CoinMarketCap Token ID by Symbol
   const id = await getCoinMarketCapTokenId(symbol);
   console.log("Token ID", id);
 
-  const url = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?id=${id}`;
+  const URL = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?id=${id}`;
 
   // Get Token Price by CoinMarketCapID
   try {
-    const tokenData = await axios.get(url, {
+    const tokenData = await axios.get(URL, {
       headers: {
-        "X-CMC_PRO_API_KEY": apiKey,
+        "X-CMC_PRO_API_KEY": CoinMarketCapApiKey as string,
       },
     });
     const firstElement = Object.values(tokenData.data.data)[0];
@@ -33,12 +34,12 @@ export async function getPrice(symbol: string) {
 }
 
 async function getCoinMarketCapTokenId(symbol: string) {
-  const url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/map";
+  const URL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/map";
 
   try {
-    const tokenData = await axios.get(url, {
+    const tokenData = await axios.get(URL, {
       headers: {
-        "X-CMC_PRO_API_KEY": apiKey,
+        "X-CMC_PRO_API_KEY": CoinMarketCapApiKey as string,
       },
     });
     const tokenId = tokenData.data.data.find(
@@ -49,3 +50,5 @@ async function getCoinMarketCapTokenId(symbol: string) {
     console.log(error);
   }
 }
+
+getPrice("SAND");

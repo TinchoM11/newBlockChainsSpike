@@ -21,6 +21,8 @@
     "alchemy-sdk": "^2.9.2",
     "aptos": "^1.13.1",
     "big-number": "^2.0.0",
+    "bitcore-lib": "^10.0.5",
+    "bitcore-mnemonic": "^10.0.5",
     "dotenv": "^16.3.1",
     "ethers": "^5.7.2",
     "isomorphic-fetch": "^3.0.0",
