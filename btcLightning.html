@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./btcLightningStyles.css" />
+    <title>Document</title>
+    <script src="./bitcoinLightning.js"></script>
+  </head>
+  <body>
+    <div class="methods">
+      <button class="button" id="enableButton" type="button" onclick="enable()">
+        webln.enable()
+      </button>
+      <p>Determines if the WebLN provider will allow the page to use it</p>
+    </div>
+
+    <div class="methods">
+      <button class="button" type="button" onclick="getInfoOfAccount()">
+        webln.getInfo()
+      </button>
+      <div id="info">
+        Get information about the connected node: node alias, public key and
+        color
+      </div>
+    </div>
+
+    <div class="methods">
+      <button class="button" type="button" onclick="keySend()">
+        webln.keySend()
+      </button>
+      <div class="methodsInfo">
+        <p>
+          This is a spontaneous payment that does not require an invoice and
+          only needs a destination public key and and amount.
+        </p>
+        <div id="info">
+          <label for="toAddress">To Address Public Key:</label>
+          <input
+            class="inputClass"
+            id="toAddress"
+            type="string"
+            name="toAddress"
+            value="03006fcf3312dae8d068ea297f58e2bd00ec1ffe214b793eda46966b6294a53ce6"
+            placeholder="03006fcf3312dae8d068ea297f58e2bd00ec1ffe214b793eda46966b6294a53ce6"
+          />
+          <label for="toAmount">Satoshis:</label>
+          <input
+            class="inputAmount"
+            id="toAmount"
+            type="number"
+            name="amount"
+            value=""
+            placeholder="Amt"
+            step="1"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="methods">
+      <button class="button" type="button" onclick="makeInvoice()">
+        webln.makeInvoice()
+      </button>
+      <div class="methodsInfo">
+        <div class="makeInvoiceResponse" id="makeInvoice">
+          Request that the user creates an invoice to be used by the web app.
+          This will return a BOLT-11 invoice. Amount in Satoshis
+        </div>
+        <input
+          class="inputAmount"
+          id="createInvoiceAmount"
+          type="number"
+          name="amount"
+          value=""
+          placeholder="Amt"
+          step="1"
+        />
+      </div>
+    </div>
+
+    <div class="methods">
+      <button class="button" type="button" onclick="sendPayment()">
+        webln.sendPaymnet()
+      </button>
+      <div class="methodsInfo">
+        <div class="sendPayment" id="sendPayment">
+          Request that the user sends a payment for an invoice. The application
+          needs to provide a BOLT-11 invoice.
+        </div>
+      </div>
+    </div>
+
+    <div class="methods">
+      <button class="button" type="button" onclick="signMessage()">
+        webln.signMessage()
+      </button>
+      <div class="methodsInfo">
+        <input
+          type="string"
+          id="message"
+          class="message"
+          name="message"
+          value=""
+          placeholder="Message to Sign"
+        />
+        <p id="messageInfo"">Request that the user signs an arbitrary string message.</p>
+      </div>
+    </div>
+    <div class="methods">
+        <button class="button" type="button" onclick="verifyMessage()">
+          webln.verifyMessage()
+        </button>
+        <div class="methodsInfo">
+          <p id="messageInfo"">Verifies the signature against the raw message, and let's the user know if it was valid. There's no return value, this method is intended purely for the user to verify a signature themselves without having to trust your website.</p>
+        </div>
+      </div>
+  </body>
+</html>
