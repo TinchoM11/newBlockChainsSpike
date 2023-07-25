@@ -46,7 +46,7 @@
   margin-right: 10px;
   width: 70vw;
   border: none;
-  overflow-wrap: break-word;
+  overflow-x: scroll;
 }
 
 .message {

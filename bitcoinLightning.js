@@ -68,7 +68,7 @@ async function makeInvoice() {
 
   const amount = document.getElementById("createInvoiceAmount").value;
   try {
-    await window.webln.enable();
+
     const result = await window.webln.makeInvoice({
       amount: amount,
     });
@@ -77,10 +77,10 @@ async function makeInvoice() {
     invoiceResponseDiv.className = "makeInvoiceResponse";
 
     const invoiceHash = document.createElement("p");
-    nodeAlias.innerText = "Request Hash: " + result.rHash;
+    invoiceHash.innerText = "Request Hash: " + result.rHash;
 
     const invoiceRequest = document.createElement("p");
-    nodeMethods.innerText = "PaymentRequest: " + result.paymentRequest;
+    invoiceRequest.innerText = "PaymentRequest: " + result.paymentRequest;
 
     invoiceResponseDiv.appendChild(invoiceHash);
     invoiceResponseDiv.appendChild(invoiceRequest);
