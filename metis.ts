@@ -138,7 +138,7 @@ async function main() {
     PK_TESTNET,
     {
       chainId: 599, // Chain ID of the network
-      rpc: ["https://goerli.gateway.metisdevops.link	"],
+      rpc: ["https://goerli.gateway.metisdevops.link"],
 
       nativeCurrency: {
         decimals: 18,

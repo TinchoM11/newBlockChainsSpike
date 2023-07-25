@@ -50,5 +50,3 @@ async function getCoinMarketCapTokenId(symbol: string) {
     console.log(error);
   }
 }
-
-getPrice("SAND");
