@@ -8,8 +8,9 @@ import axios from "axios";
 import { getPrice } from "./pricesApi";
 import { EosEvmNetwork, EosEvmNetworkTestnet } from "@thirdweb-dev/chains";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
+import { Erc20EOSList } from "./eosEvmTokenList";
 
-const EOS_RPC = process.env.METIS_TESTNET_RPC as string;
+const EOS_RPC = process.env.EOS_RPC as string;
 const EOS_PK = process.env.EOS_PK as string;
 
 const abi = [
@@ -42,48 +43,47 @@ async function main() {
     parseFloat(ethers.utils.formatEther(balance)) * eosPrice;
   console.log("Balance in USDC:", nativeBalanceInUsd);
   // Get Balance of a Token
-  // console.log("---------- Get Balance of a Token ----------");
-  // const contractAddress = "0x9fc25190bac66d7be4639268220d1bd363ca2698";
+  console.log("---------- Get Balance of a Token ----------");
+  const contractAddress = "0x9fc25190bac66d7be4639268220d1bd363ca2698";
 
-  // const contract = new ethers.Contract(contractAddress, abi, provider);
-  // console.log("Contract:", contract);
-  // const decimals = await contract.decimals();
-  // console.log("Decimals of Token: " + decimals);
-  // const symbol = await contract.symbol();
-  // console.log("Symbol of Token:", symbol);
+  const contract = new ethers.Contract(contractAddress, abi, provider);
+  const decimals = await contract.decimals();
+  console.log("Decimals of Token: " + decimals);
+  const symbol = await contract.symbol();
+  console.log("Symbol of Token:", symbol);
 
-  // const balanceToken = await contract.balanceOf(
-  //   "0xD3564d4C3cE55D4cB9694CDAcE90547F7e7c8628"
-  // );
-  // console.log(
-  //   `Balance of ${symbol}: ${ethers.utils.formatUnits(balanceToken, decimals)}`
-  // );
+  const balanceToken = await contract.balanceOf(
+    "0xD3564d4C3cE55D4cB9694CDAcE90547F7e7c8628"
+  );
+  console.log(
+    `Balance of ${symbol}: ${ethers.utils.formatUnits(balanceToken, decimals)}`
+  );
 
-  // const tokenPriceInUsd = Number(await getPrice(symbol));
-  // const tokenBalanceInUsd =
-  //   parseFloat(ethers.utils.formatEther(balanceToken)) * tokenPriceInUsd;
+  const tokenPriceInUsd = Number(await getPrice(symbol));
+  const tokenBalanceInUsd =
+    parseFloat(ethers.utils.formatEther(balanceToken)) * tokenPriceInUsd;
 
-  // console.log("Balance in USD of Token:", tokenBalanceInUsd);
+  console.log("Balance in USD of Token:", tokenBalanceInUsd);
 
-  // // Sending a Transaction of Native Token
-  // console.log("---------- Sending a Transaction of Native Token ----------");
+  // Sending a Transaction of Native Token
+  console.log("---------- Sending a Transaction of Native Token ----------");
 
-  // const amount = ethers.BigNumber.from("1000000000000000"); // 0.001 METIS
-  // const transaction = {
-  //   to: "0xD3564d4C3cE55D4cB9694CDAcE90547F7e7c8628",
-  //   value: amount,
-  // };
+  const amount = ethers.BigNumber.from("1000000000000000000");
+  const transaction = {
+    to: "0x035D35aDDdbfce7A80Daf81811a3Cc4C7D6a4688",
+    value: amount,
+  };
 
-  // console.log(
-  //   "Balance Actual:" + (await walletWithBalance.getBalance()).toString()
-  // );
+  console.log(
+    "Balance Actual:" + (await recoveredWallet.getBalance()).toString()
+  );
 
-  // try {
-  //   const txResponse = await walletWithBalance.sendTransaction(transaction);
-  //   console.log("Transaction Hash", txResponse.hash);
-  // } catch (error) {
-  //   console.error("Error sending the transaction", error);
-  // }
+  try {
+    const txResponse = await recoveredWallet.sendTransaction(transaction);
+    console.log("Transaction Hash", txResponse.hash);
+  } catch (error) {
+    console.error("Error sending the transaction", error);
+  }
 
   // // Sending a Transaction of ERC20 Token
   // console.log("---------- Sending a Transaction of ERC20 Token ----------");
@@ -125,88 +125,100 @@ async function main() {
   //   ethers.utils.formatUnits(balanceAfterTransfer, tokenDecimals)
   // );
 
-  // console.log("-------- Getting Receipt of Transaction --------");
-  // try {
-  //   // ID de la transacción para la que deseas obtener el recibo
-  //   const txHash =
-  //     "0xbf6f4e6babf15af5d1c8044c9d575272d6ce932221e065393ff210bfa05096e5";
+  console.log("-------- Getting Receipt of Transaction --------");
+  try {
+    // ID de la transacción para la que deseas obtener el recibo
+    const txHash =
+      "0x228c528fee70ff68764893462b66033001b8e7e3a3a414b04b725dc1c5356de9";
 
-  //   const requestData = {
-  //     jsonrpc: "2.0",
-  //     method: "eth_getTransactionReceipt",
-  //     params: [txHash],
-  //     id: 1,
-  //   };
+    const requestData = {
+      jsonrpc: "2.0",
+      method: "eth_getTransactionReceipt",
+      params: [txHash],
+      id: 1,
+    };
 
-  //   axios
-  //     .post(EOS_RPC, requestData)
-  //     .then((response) => {
-  //       const receipt = response.data.result;
-  //       console.log("Transaction Receipt:", receipt);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error:", error);
-  //     });
-  // } catch (error) {
-  //   console.error("Error getting the receipt", error);
-  // }
-
-  // /////////// ThirdWeb SDK ///////////
-  const sdk = ThirdwebSDK.fromPrivateKey(
-    EOS_PK,
-    {
-      chainId: 17777, // Chain ID of the network
-      rpc: [EOS_RPC],
-
-      nativeCurrency: {
-        decimals: 18,
-        name: "EOS",
-        symbol: "EOS",
-      },
-      shortName: "EOS", // Display value shown in the wallet UI
-      slug: "Eos", // Display value shown in the wallet UI
-      testnet: false, // Boolean indicating whether the chain is a testnet or mainnet
-      chain: "Eos", // Name of the network
-      name: "Eos EVM", // Name of the network
-    },
-    {
-      clientId: process.env.CLIENT_ID,
-      secretKey: process.env.SECRET_KEY,
-    }
-  );
-  // Get Balance using ThirdWeb SDK
-  console.log("");
-  console.log("-----------------------------------------");
-  console.log("-----------------------------------------");
-  console.log("---------- USING ThirdWeb SDK ----------");
-  console.log("-----------------------------------------");
-  console.log("-----------------------------------------");
-  console.log("---------- Get Balance using ThirdWeb SDK ----------");
-  const balanceThirdWeb = await sdk.wallet.balance();
-  console.log("Balance: " + JSON.stringify(balanceThirdWeb, null, 2));
-
-  console.log("---------- Get Token Balance using ThirdWeb SDK ----------");
-  const tokenBalanceThirdWeb = await sdk.wallet.balance("0x9fC25190baC66D7be4639268220d1Bd363ca2698");
-  console.log("Balance: " + JSON.stringify(tokenBalanceThirdWeb, null, 2));
-
-  // Transfer using ThirdWeb SDK
-  console.log("---------- Transfer Native Token using ThirdWeb SDK ----------");
-  const txResult = await sdk.wallet.transfer(
-    "0x035D35aDDdbfce7A80Daf81811a3Cc4C7D6a4688",
-    0.1
-  );
-  console.log("Transaction Result: " + JSON.stringify(txResult, null, 2));
-
-  // Transfer Token using ThirdWeb SDK
-  // console.log("---------- Transfer Token using ThirdWeb SDK ----------");
-  // const txResultToken = await sdk.wallet.transfer(
-  //   "0xD3564d4C3cE55D4cB9694CDAcE90547F7e7c8628",
-  //   1,
-  //   "0x757251f93e5f51d6c488b9ebd2c8386abae7e3cd"
-  // );
-  // console.log(
-  //   "Token Transaction Result: " + JSON.stringify(txResultToken, null, 2)
-  // );
+    axios
+      .post(EOS_RPC, requestData)
+      .then((response) => {
+        const receipt = response.data.result;
+        console.log("Transaction Receipt:", receipt);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  } catch (error) {
+    console.error("Error getting the receipt", error);
+  }
 }
 
-main();
+async function getTransactionHistory() {
+  const walletAddress = "0x50D2DEC635c48f5E8CeDE341Df87c651c6cD5318";
+
+  const url = `https://explorer.evm.eosnetwork.com/api?module=account&action=txlist&address=${walletAddress}`;
+
+  try {
+    const response = await axios.get(url);
+    console.log("Historial de transacciones:", response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      "Error al obtener el historial de transacciones:",
+      error.message
+    );
+    throw error;
+  }
+}
+
+async function getTokensHolding() {
+  const walletAddress = "0x5e0679b7b4C32BFfcde69B5fefEa89E77564FFE1";
+
+  const url = `https://explorer.evm.eosnetwork.com/api?module=account&action=tokenlist&address=${walletAddress}`;
+
+  const response = await axios.get(url);
+  const tokens = response.data.result;
+  console.log("Tokens:", tokens);
+  for (const token of tokens) {
+    console.log("Token Name:", token.name);
+    console.log("Token Decimals:", token.decimals);
+    console.log("Token Symbol:", token.symbol);
+    console.log("Token Balance:", token.balance);
+
+    try {
+      const price = await getPrice(token.symbol);
+      console.log("Token Price:", price);
+    } catch (error) {
+      console.log("Price No Encontrado");
+    }
+
+    console.log("--------------------");
+  }
+
+  return response.data;
+}
+
+async function getEosEvmTokenMetadata() {
+  const tokenList = Erc20EOSList;
+
+  const EosEvmSupportedTokens: any = [];
+
+  for (const token of tokenList) {
+    const url = `https://explorer.evm.eosnetwork.com/api?module=token&action=getToken&contractaddress=${token}`;
+
+    const response = await axios.get(url);
+    const tokenMetadata = {
+      address: response.data.result.contractAddress,
+      name: response.data.result.name,
+      decimals: response.data.result.decimals,
+      symbol: response.data.result.symbol,
+      chain: "EOSEVM",
+      logoUri: "",
+    };
+
+    EosEvmSupportedTokens.push(tokenMetadata);
+  }
+  console.log("EosEvmSupportedTokens:", EosEvmSupportedTokens);
+}
+
+getEosEvmTokenMetadata();
+//getTokensHolding();

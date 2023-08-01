@@ -1,3 +1,5 @@
+
+
 async function enable() {
   if (typeof window.webln === "undefined") {
     return alert("No WebLN available.");
@@ -68,7 +70,6 @@ async function makeInvoice() {
 
   const amount = document.getElementById("createInvoiceAmount").value;
   try {
-
     const result = await window.webln.makeInvoice({
       amount: amount,
     });

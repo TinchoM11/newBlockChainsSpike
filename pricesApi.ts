@@ -1,5 +1,6 @@
 // @ts-nocheck
 import axios from "axios";
+import { BigNumber, ethers } from "ethers";
 require("dotenv").config();
 
 const CoinMarketCapApiKey = process.env.COIN_MARKET_CAP_API_KEY;
@@ -7,7 +8,6 @@ const CoinMarketCapApiKey = process.env.COIN_MARKET_CAP_API_KEY;
 export async function getPrice(symbol: string) {
   // Get CoinMarketCap Token ID by Symbol
   const id = await getCoinMarketCapTokenId(symbol);
-  console.log("Token ID", id);
 
   const URL = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?id=${id}`;
 
@@ -20,16 +20,14 @@ export async function getPrice(symbol: string) {
     });
     const firstElement = Object.values(tokenData.data.data)[0];
 
-    console.log(
-      "Symbol:",
-      firstElement.symbol,
-      "Price:",
-      firstElement.quote.USD.price
+    const priceInBigNumber = ethers.utils.parseUnits(
+      firstElement.quote.USD.price.toFixed(6),
+      6
     );
 
     return firstElement.quote.USD.price;
   } catch (error) {
-    console.log(error);
+    
   }
 }
 
@@ -47,6 +45,14 @@ async function getCoinMarketCapTokenId(symbol: string) {
     ).id;
     return tokenId;
   } catch (error) {
-    console.log(error);
+
   }
 }
+
+export const numberToBigNumber = (value: string | number, decimals: number) => {
+  if (typeof value === "number") {
+    return ethers.utils.parseUnits(value.toFixed(decimals), decimals);
+  } else return ethers.utils.parseUnits(value, decimals);
+};
+
+//getPrice("USDC");
