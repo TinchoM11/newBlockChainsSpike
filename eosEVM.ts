@@ -2,6 +2,8 @@
 // With the Same PK, you can use the same wallet on all EVM chains.
 // So we have the same address for EOS EVM and Ethereum.
 
+const cheerio = require("cheerio");
+
 require("dotenv").config();
 import { ethers } from "ethers";
 import axios from "axios";
@@ -197,9 +199,7 @@ async function getTokensHolding() {
   return response.data;
 }
 
-async function getEosEvmTokenMetadata() {
-  const tokenList = Erc20EOSList;
-
+async function getEosEvmTokenMetadata(tokenList: string[]) {
   const EosEvmSupportedTokens: any = [];
 
   for (const token of tokenList) {
@@ -220,5 +220,28 @@ async function getEosEvmTokenMetadata() {
   console.log("EosEvmSupportedTokens:", EosEvmSupportedTokens);
 }
 
-getEosEvmTokenMetadata();
+//getEosEvmTokenMetadata();
 //getTokensHolding();
+
+async function Tokens() {
+  const getERC20TokensURL =
+    "https://explorer.evm.eosnetwork.com/tokens?type=JSON";
+
+  const response = await axios.get(getERC20TokensURL);
+
+  const items = response.data.items;
+
+  // Extract the token hash from each item on the html
+  let tokenHashes = [];
+  for (let i = 0; i < items.length; i++) {
+    let item = items[i];
+    //@ts-ignore
+    let tokenHash = item.match(/data-address-hash="(.*)"/)[1];
+    //@ts-ignore
+    tokenHashes.push(tokenHash);
+  }
+
+  getEosEvmTokenMetadata(tokenHashes);
+}
+
+Tokens();
