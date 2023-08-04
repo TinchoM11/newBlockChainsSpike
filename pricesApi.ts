@@ -19,16 +19,8 @@ export async function getPrice(symbol: string) {
       },
     });
     const firstElement = Object.values(tokenData.data.data)[0];
-
-    const priceInBigNumber = ethers.utils.parseUnits(
-      firstElement.quote.USD.price.toFixed(6),
-      6
-    );
-
     return firstElement.quote.USD.price;
-  } catch (error) {
-    
-  }
+  } catch (error) {}
 }
 
 async function getCoinMarketCapTokenId(symbol: string) {
@@ -44,9 +36,7 @@ async function getCoinMarketCapTokenId(symbol: string) {
       (token: any) => token.symbol === symbol
     ).id;
     return tokenId;
-  } catch (error) {
-
-  }
+  } catch (error) {}
 }
 
 export const numberToBigNumber = (value: string | number, decimals: number) => {

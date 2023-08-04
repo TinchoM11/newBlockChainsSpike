@@ -8,9 +8,6 @@ require("dotenv").config();
 import { ethers } from "ethers";
 import axios from "axios";
 import { getPrice } from "./pricesApi";
-import { EosEvmNetwork, EosEvmNetworkTestnet } from "@thirdweb-dev/chains";
-import { ThirdwebSDK } from "@thirdweb-dev/sdk";
-import { Erc20EOSList } from "./eosEvmTokenList";
 
 const EOS_RPC = process.env.EOS_RPC as string;
 const EOS_PK = process.env.EOS_PK as string;
@@ -173,7 +170,7 @@ async function getTransactionHistory() {
 }
 
 async function getTokensHolding() {
-  const walletAddress = "0x5e0679b7b4C32BFfcde69B5fefEa89E77564FFE1";
+  const walletAddress = "0xBb79E40E7989Aa32AE0bD4DC579BEF9F9f1126F4";
 
   const url = `https://explorer.evm.eosnetwork.com/api?module=account&action=tokenlist&address=${walletAddress}`;
 
@@ -182,6 +179,7 @@ async function getTokensHolding() {
   console.log("Tokens:", tokens);
   for (const token of tokens) {
     console.log("Token Name:", token.name);
+    console.log("Token Address:", token.contractAddress);
     console.log("Token Decimals:", token.decimals);
     console.log("Token Symbol:", token.symbol);
     console.log("Token Balance:", token.balance);
@@ -213,7 +211,10 @@ async function getEosEvmTokenMetadata(tokenList: string[]) {
       symbol: response.data.result.symbol,
       chain: "EOSEVM",
       logoUri: "",
+      price: 0,
     };
+
+    tokenMetadata.price = await getPrice(tokenMetadata.symbol);
 
     EosEvmSupportedTokens.push(tokenMetadata);
   }
@@ -221,7 +222,7 @@ async function getEosEvmTokenMetadata(tokenList: string[]) {
 }
 
 //getEosEvmTokenMetadata();
-//getTokensHolding();
+Tokens();
 
 async function Tokens() {
   const getERC20TokensURL =
@@ -243,5 +244,3 @@ async function Tokens() {
 
   getEosEvmTokenMetadata(tokenHashes);
 }
-
-Tokens();
