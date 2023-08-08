@@ -144,7 +144,7 @@ async function swapTokensForTokens() {
   const tokenIn = "0xfa9343c3897324496a05fc75abed6bac29f8a40f"; // USDT TOKEN
   const tokenOut = "0xB529283cB363703BD7c049D8Cf157249C2bC32dE"; // USDC TOKEN
   const path = [tokenIn, tokenOut];
-  const amountIn = 2800000; // 3 USDT
+  const amountIn = 2000000; // 3 USDT
   const deadline = Math.floor(Date.now() / 1000) + 60 * 30; // 30 minutes from the current Unix time
   const to = "0x035D35aDDdbfce7A80Daf81811a3Cc4C7D6a4688";
   const gasLimit = 210000;
@@ -192,4 +192,4 @@ async function swapTokensForTokens() {
   }
 }
 
-//swapTokensForTokens();
+swapTokensForTokens();

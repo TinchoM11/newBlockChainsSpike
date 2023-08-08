@@ -11,8 +11,8 @@ async function getBalances() {
     },
   };
 
-  const address = "0xb93Bad01CE69496ACB82870e18cf706d7cc6675C";
-  const url = `https://api.covalenthq.com/v1/bsc-mainnet/address/${address}/balances_v2/`;
+  const address = "0x80C67432656d59144cEFf962E8fAF8926599bCF8";
+  const url = `https://api.covalenthq.com/v1/base-mainnet/address/${address}/balances_v2/`;
 
   const balance = await axios
     .get(url, config)

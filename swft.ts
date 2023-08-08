@@ -31,8 +31,6 @@ async function exchanageRate(fromToken: string, toToken: string) {
   return res.data.data.instantRate;
 }
 
-//exchanageRate("ETH", "USDT(ERC20)");
-
 async function createOrder() {
   const depositCoinCode = "MATIC(MATIC)";
   const receiveCoinCode = "EOS(EVM)";
