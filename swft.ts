@@ -20,7 +20,7 @@ async function getTokensSupported() {
 getTokensSupported();
 
 // How many tokens of "receiveCoinCode" can I get for 1 "depositCoinCode"
-async function exchanageRate(fromToken: string, toToken: string) {
+async function exchangeRate(fromToken: string, toToken: string) {
   const params = {
     depositCoinCode: fromToken,
     receiveCoinCode: toToken,
@@ -34,7 +34,7 @@ async function exchanageRate(fromToken: string, toToken: string) {
 async function createOrder() {
   const depositCoinCode = "MATIC(MATIC)";
   const receiveCoinCode = "EOS(EVM)";
-  const instantRate = await exchanageRate(depositCoinCode, receiveCoinCode);
+  const instantRate = await exchangeRate(depositCoinCode, receiveCoinCode);
   const depositCoinAmt = "26"; // Amount to Bridge
   const receiveCoinAmt = (parseFloat(depositCoinAmt) * instantRate).toString();
   console.log("receiveCoinAmt", receiveCoinAmt);
