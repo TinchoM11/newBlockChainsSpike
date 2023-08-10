@@ -2,8 +2,6 @@
 // With the Same PK, you can use the same wallet on all EVM chains.
 // So we have the same address for EOS EVM and Ethereum.
 
-const cheerio = require("cheerio");
-
 require("dotenv").config();
 import { ethers } from "ethers";
 import axios from "axios";
