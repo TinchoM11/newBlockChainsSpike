@@ -147,32 +147,35 @@ async function main() {
 
   console.log("Receipt with API Call:", txReceiptWithApiCall.data.result);
 
-  // // Sending a Transaction of ERC20 Token
-  // console.log("---------- Sending a Transaction of ERC20 Token ----------");
+  // Sending a Transaction of ERC20 Token
+  // console.log("                                         ");
+  // console.log("-----------------------------------------");
+  // console.log("-- Sending a Transaction ERC20 Token ----");
+  // console.log("-----------------------------------------");
+  // console.log("-----------------------------------------");
 
   // const erc20TokenContractAddress =
   //   "0x757251f93e5f51d6c488b9ebd2c8386abae7e3cd";
   // const erc20TokenContract = new ethers.Contract(
   //   erc20TokenContractAddress,
   //   abi,
-  //   walletWithBalance
+  //   recoveredWallet
   // );
 
-  // // Dirección del destinatario de la transferencia
+  // // Destination Address of the transfer
   // const toAddress = "0xD3564d4C3cE55D4cB9694CDAcE90547F7e7c8628";
 
   // const tokenDecimals = await erc20TokenContract.decimals();
 
   // const actualBalance = await erc20TokenContract.balanceOf(
-  //   walletWithBalance.address
+  //   recoveredWallet.address
   // );
   // console.log(
   //   "Actual Balance of Token:",
   //   ethers.utils.formatUnits(actualBalance, tokenDecimals)
   // );
 
-  // //   const amountToTransfer = actualBalance.div(5);
-  // const amountToTransfer = ethers.utils.parseUnits("1", tokenDecimals);
+  // const amountToTransfer = ethers.utils.parseUnits("0.1", tokenDecimals);
   // const txResponse = await erc20TokenContract.transfer(
   //   toAddress,
   //   amountToTransfer
@@ -180,7 +183,7 @@ async function main() {
 
   // console.log("Transaction Hash Transfering ERC20 Token", txResponse.hash);
   // const balanceAfterTransfer = await erc20TokenContract.balanceOf(
-  //   walletWithBalance.address
+  //   recoveredWallet.address
   // );
   // console.log(
   //   "Balance after Transfer:",
