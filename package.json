@@ -33,7 +33,7 @@
     "node-fetch": "^3.3.1",
     "text-encoding-utf-8": "^1.0.2",
     "ts-node": "^10.9.1",
-    "web3": "^4.0.3",
+    "web3": "^4.1.0",
     "xrpl": "^2.9.1"
   },
   "devDependencies": {

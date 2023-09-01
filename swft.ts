@@ -5,19 +5,21 @@ import { ethers } from "ethers";
 const SWFT_API_URL = "https://www.swftc.info/api";
 
 async function getTokensSupported() {
-  const params = {
-    supportType: "advanced",
-    mainNetwork: "SOL", //  --- We can also use POLYGON, BSC, EOS, ETH, AVAXC, FTM, ARB, OPTIMISM, SOL
-  };
-  const res = await axios.post(`${SWFT_API_URL}/v1/queryCoinList`, params);
-  console.log(res.data.data);
-  const symbol = res.data.data.filter(
-    (token: any) => token.contact === "".toLowerCase()
+  const res = await axios.get(
+    `${SWFT_API_URL}/v1/queryCoinList?supportType=advanced`
   );
-  console.log(symbol);
+  const allTokens = res.data.data;
+  console.log(allTokens);
+  const findedTokenSymbol = allTokens.find(
+    (t: any) =>
+      t.mainNetwork === "ETH" &&
+      t.contact.toLowerCase() ===
+        "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48".toLowerCase()
+  );
+  console.log(findedTokenSymbol.coinCode);
 }
 
-getTokensSupported();
+//getTokensSupported();
 
 // How many tokens of "receiveCoinCode" can I get for 1 "depositCoinCode"
 async function exchangeRate(fromToken: string, toToken: string) {
@@ -26,59 +28,104 @@ async function exchangeRate(fromToken: string, toToken: string) {
     receiveCoinCode: toToken,
   };
   const res = await axios.post(`${SWFT_API_URL}/v1/getBaseInfo`, params);
-  console.log(res.data.data);
-
   return res.data.data.instantRate;
 }
 
 async function createOrder() {
-  const depositCoinCode = "MATIC(MATIC)";
-  const receiveCoinCode = "EOS(EVM)";
+  const depositCoinCode = "EOS(EVM)";
+  const receiveCoinCode = "USDC";
   const instantRate = await exchangeRate(depositCoinCode, receiveCoinCode);
-  const depositCoinAmt = "26"; // Amount to Bridge
+  const depositCoinAmt = "35"; // Amount to Bridge
   const receiveCoinAmt = (parseFloat(depositCoinAmt) * instantRate).toString();
-  console.log("receiveCoinAmt", receiveCoinAmt);
 
   const params = {
-    equipmentNo: "0x035D35aDDdbfce7A80Daf81811a3Cc4C7D6a4688", // Can be user Address
+    equipmentNo: "0x2Db0A2F760ff15fC4e8e4B2cC5c15d158136BB70", // Can be user Address
     sourceType: "H5", // Can be Android, IOS or H5 if we are using a web browser
     sourceFlag: "Sphereone",
     depositCoinCode,
     receiveCoinCode,
     depositCoinAmt,
     receiveCoinAmt,
-    destinationAddr: "0x035D35aDDdbfce7A80Daf81811a3Cc4C7D6a4688",
-    refundAddr: "0x035D35aDDdbfce7A80Daf81811a3Cc4C7D6a4688",
+    destinationAddr: "0xaa77292e09f019720fd1C53311c65d6501B7D63f",
+    refundAddr: "0x2Db0A2F760ff15fC4e8e4B2cC5c15d158136BB70",
   };
+
+  console.log("Params", params);
   const res = await axios.post(`${SWFT_API_URL}/v2/accountExchange`, params);
+  if (res.data.resCode === "921") {
+    throw new Error(
+      "Error getting Quote fromt SWFT. The amount may be below the minimum required:" +
+        res.data.resMsg
+    );
+  }
   console.log(res.data);
 }
 
 //createOrder();
 
-async function uploadDepositTxHash() {
+async function uploadDepositTxHash({
+  orderId,
+  depositTxid,
+}: {
+  orderId: string;
+  depositTxid: string;
+}) {
+  const SWFT_API_URL = "https://www.swftc.info/api";
   const params = {
-    orderId: "7193bf28-aee7-42e3-8851-2b992fd4991d",
-    depositTxid:
-      "0xffd1bf305bb4ac2c6e30f588c820212bfe3d1684ec834110e75a8e1e61936be0",
+    orderId,
+    depositTxid,
   };
   const res = await axios.post(`${SWFT_API_URL}/v2/modifyTxId`, params);
   console.log(res.data);
 }
 
-//uploadDepositTxHash();
+//uploadDepositTxHash({
+//   orderId: "ca53a5ca-ed68-4d56-86bc-af32329d675a",
+//   depositTxid:
+//     "0xe4d8cd75334572b0ff5b3daf22eae7176e3cffbbab5c4d50c5c6602f4e8285b2",
+// });
 
 async function checkStatus() {
   const params = {
-    equipmentNo: "0x035D35aDDdbfce7A80Daf81811a3Cc4C7D6a4688", // The user address
+    equipmentNo: "0x2Db0A2F760ff15fC4e8e4B2cC5c15d158136BB70", // The user address
     sourceType: "H5", // Can be Android, IOS or H5 if we are using a web browser
-    orderId: "7193bf28-aee7-42e3-8851-2b992fd4991d",
+    orderId: "d846ce2a-3261-4be8-a1e0-a1928ebb97cb",
   };
   const res = await axios.post(`${SWFT_API_URL}/v2/queryOrderState`, params);
-  console.log(res.data);
+
+  if (!res.data.data.depositTxid) {
+    console.log("Updating Deposit Tx Hash");
+    await uploadDepositTxHash({
+      orderId: "d846ce2a-3261-4be8-a1e0-a1928ebb97cb",
+      depositTxid:
+        "0xf7eb38b182c8d1fb6c1f97373d5a3651f6e9010bd97527c53e04da30773213f1",
+    });
+  }
+
+  console.log(res.data.data);
 }
 
-//checkStatus();
+checkStatus();
+
+async function estimateGas() {
+  // Estimate gas with ethers of a transaction
+  const provider = new ethers.providers.JsonRpcProvider(
+    "https://eth-mainnet.g.alchemy.com/v2/RV7_ZhCsfmH5q15_TiQKaiV8p87wrls3"
+  );
+  const tx = await provider.estimateGas({
+    to: "0x2Db0A2F760ff15fC4e8e4B2cC5c15d158136BB70",
+    data: "0x",
+    value: ethers.utils.parseEther("0.1"),
+  });
+  console.log(tx);
+
+  const tx2 = await provider.getTransactionReceipt(
+    "0x8e3820a27d58b25c553985439dd1b45e3731701893796d52bfb8b7eb1f0c64ce"
+  );
+  console.log(tx2);
+}
+
+//estimateGas();
 
 /*
 Flow to perform a Bridge
