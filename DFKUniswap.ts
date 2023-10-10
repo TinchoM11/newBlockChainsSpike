@@ -37,7 +37,7 @@ async function getAmountOut() {
   );
   const fromTokenSymbol = await fromTokenContract.symbol();
   const fromTokenDecimals = await fromTokenContract.decimals();
-  const amountIn = ethers.utils.parseUnits("10", fromTokenDecimals); // 10 USDC/AVAX or whatever
+  const amountIn = ethers.utils.parseUnits("1", fromTokenDecimals); // 10 USDC/AVAX or whatever
 
   const path = [usdcAddress, jewelAddress]; // Ruta de intercambio: AVAX-> JEWEL
   try {
@@ -46,21 +46,29 @@ async function getAmountOut() {
     if (amounts && amounts.length >= 2) {
       const jewelAmount = ethers.utils.formatEther(amounts[1]); // Cantidad de JEWEL en Ether
       console.log(
-        `You will get ${jewelAmount} JEWEL swapping 10 ${fromTokenSymbol} for JEWEL.`
+        `You will get ${jewelAmount} JEWEL swapping ${amountIn} ${fromTokenSymbol} for JEWEL.`
       );
-      return parseFloat(jewelAmount);
+      return ethers.utils.parseUnits(jewelAmount, 18);
     }
   } catch (error) {
     console.error("Error while getting swap information", error);
     throw error;
   }
 
-  return 0;
+  return BigNumber.from(0);
 }
 
-getAmountOut();
+//getAmountOut();
 
 async function swapTokens() {
+  const fromTokenContract = new ethers.Contract(
+    usdcAddress,
+    ERC20_ABI,
+    provider
+  );
+  const fromTokenSymbol = await fromTokenContract.symbol();
+  const fromTokenDecimals = await fromTokenContract.decimals();
+
   const privateKey = process.env.PK as string;
   const wallet = new ethers.Wallet(privateKey, provider);
   const uniswapRouter = new ethers.Contract(
@@ -72,11 +80,12 @@ async function swapTokens() {
     wallet
   );
 
-  const amountIn = ethers.utils.parseEther("1"); // Monto de tokens de entrada en Wei
+  const amountIn = ethers.utils.parseUnits("1", fromTokenDecimals); // 10 USDC/AVAX or whatever
   const amountOut = await getAmountOut();
-  const amountOutMin = BigNumber.from(amountOut).mul(98).div(100); // 2% slippage
-  const path = [avaxAddress, jewelAddress]; // AVAX -> JEWEL
-  const to = "xxxxxxxxxxxxxxxxxxxxx"; // Address to send the swapped tokens
+  console.log("amountOut", amountOut);
+  const amountOutMin = amountOut.mul(98).div(100); // 2% slippage
+  const path = [usdcAddress, jewelAddress]; // AVAX -> JEWEL
+  const to = "0x23eD50dB3e7469695DD30FFD22a7B42716A338FC"; // Address to send the swapped tokens
   const deadline = Math.floor(Date.now() / 1000) + 60 * 30; // 30 min from now
 
   try {
@@ -96,3 +105,5 @@ async function swapTokens() {
     console.error("Error al realizar el swap:", error);
   }
 }
+
+swapTokens();
