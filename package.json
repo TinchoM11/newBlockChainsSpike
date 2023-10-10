@@ -14,6 +14,8 @@
     "@mysten/sui.js": "^0.37.1",
     "@sei-js/core": "^1.4.0",
     "@sei-js/react": "^2.0.2",
+    "@synapsecns/sdk-router": "^0.2.19",
+    "@synapseprotocol/sdk": "^0.94.1",
     "@thirdweb-dev/chains": "^0.1.36",
     "@thirdweb-dev/sdk": "^3.10.38",
     "@vividnetwork/swap-sdk": "^0.2.2",

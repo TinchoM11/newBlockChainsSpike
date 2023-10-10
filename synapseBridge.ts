@@ -9,6 +9,7 @@ interface QuoteParams {
   toToken: string;
   amount: number;
   destAddress?: string;
+  deadline?: number;
 }
 
 // GET /bridge
@@ -40,13 +41,14 @@ export const getSynapseQuote = async (quoteParams: QuoteParams) => {
 };
 
 // EXAMPLE USAGE
-// getSynapseQuote({
-//   fromChain: 1,
-//   toChain: 137,
-//   fromToken: "USDC",
-//   toToken: "USDC",
-//   amount: 1000000,
-// });
+getSynapseQuote({
+  fromChain: 137,
+  toChain: 53935,
+  fromToken: "USDC",
+  toToken: "USDC",
+  amount: 2000000,
+  destAddress: "0xcc78d2f004c9de9694ff6a9bbdee4793d30f3842",
+});
 
 // Returns:
 // feeAmount (object) - The fee amount for the swap/bridge. Contains:
@@ -55,10 +57,10 @@ export const getSynapseQuote = async (quoteParams: QuoteParams) => {
 // feeConfig (array) - Fee configuration parameters, contains:
 // 0 (number) - Gas price
 // 1 (object) - Fee percentage denominator (hex encoded BigNumber)
-// 2 (object) - Protocol fee percentage numerator (hex encoded BigNumber)
+// 2 (object) - Protocol fee percentoriginQueryage numerator (hex encoded BigNumber)
 // routerAddress (string) - Address of the router contract
 // maxAmountOut (object) - Maximum amount receivable from swap/bridge, structure same as above
-// originQuery (object) - Original swap query/bridge parameters, contains:
+//  (object) - Original swap query/bridge parameters, contains:
 // swapAdapter (string) - Swap adapter address
 // tokenOut (string) - Address of output token
 // minAmountOut (object) - Minimum output token amount
@@ -82,6 +84,7 @@ export const getBridgeSynapseTxInfo = async (quoteParams: QuoteParams) => {
     toToken: quoteParams.toToken,
     amount: quoteParams.amount,
     destAddress: quoteParams.destAddress,
+    deadline: quoteParams.deadline,
   };
 
   try {
@@ -99,13 +102,17 @@ export const getBridgeSynapseTxInfo = async (quoteParams: QuoteParams) => {
   }
 };
 
+// Actual Date + 2 horus in Epoch Time
+const deadline = Math.floor(Date.now() / 1000) + 60 * 60 * 2;
+
 // getBridgeSynapseTxInfo({
 //   fromChain: 43114,
 //   toChain: 53935,
-//   fromToken: "JEWEL",
-//   toToken: "JEWEL",
-//   amount: 100000000,
+//   fromToken: "USDC",
+//   toToken: "USDC",
+//   amount: 10000000,
 //   destAddress: "0xcc78d2f004c9de9694ff6a9bbdee4793d30f3842",
+//   deadline,
 // });
 
 // Returns:
@@ -189,12 +196,12 @@ export const getSwapTxInfoSynapse = async (quoteParams: {
 };
 
 // EXAMPLE USAGE
-getSwapTxInfoSynapse({
-  chain: 53935,
-  fromToken: "AVAX",
-  toToken: "JEWEL",
-  amount: 100000000,
-});
+// getSwapTxInfoSynapse({
+//   chain: 53935,
+//   fromToken: "AVAX",
+//   toToken: "JEWEL",
+//   amount: 100000000,
+// });
 
 // Returns:
 // data: The binary data that forms the input to the transaction.
