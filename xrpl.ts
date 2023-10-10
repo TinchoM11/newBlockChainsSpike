@@ -22,7 +22,7 @@ await client.connect() */
   //Response example
   //   Test Wallet Created Wallet {
   //     publicKey: 'EDC33E901331FD3592ED2F967F81FBB16DA8E7546F14AF003D8F0AB6577313140E',
-  //     privateKey: 'ED0B1A250BA7E3B7926B44850BA1D731E9426BB70AE132863702A984738BCA3477',
+  //     privateKey: '................xxxxx',
   //     classicAddress: 'rnrorWni6BBZN7tw8832QEW6a8sCpuriu2',
   //     seed: 'sEd7rHj22cLLBbiVQfiUkoNb3DD6s1b'
   //   }

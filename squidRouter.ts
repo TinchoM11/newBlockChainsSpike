@@ -6,8 +6,14 @@ import axios from "axios";
 // Return List of All Supported Chains
 async function getChains() {
   const result = await axios.get("https://api.0xsquid.com/v1/chains");
+  result.data.chains.forEach((chain: any) => {
+    // If chain name includes "flow" console log it
+    if (chain.chainName.includes("Polygon")) {
+      console.log("Flow Chain", chain);
+    }
+  });
 
-  console.log("Chains", result.data);
+  //console.log("Chains", result.data);
 }
 
 // Return List of All Supported Tokens
@@ -81,7 +87,7 @@ const getStatus = async () => {
   // We need to take the "squidTransactionStatus". When it's 'success' the transaction is done.
 };
 
-getStatus();
+getChains();
 
 // Example of Status Response
 // At the very bottom of the response, you can see the "squidTransactionStatus"

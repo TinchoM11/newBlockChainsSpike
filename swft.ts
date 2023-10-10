@@ -10,16 +10,14 @@ async function getTokensSupported() {
   );
   const allTokens = res.data.data;
   console.log(allTokens);
-  const findedTokenSymbol = allTokens.find(
-    (t: any) =>
-      t.mainNetwork === "ETH" &&
-      t.contact.toLowerCase() ===
-        "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48".toLowerCase()
-  );
-  console.log(findedTokenSymbol.coinCode);
+  // const findedTokenSymbol = allTokens.find(
+  //   (t: any) =>
+  //     t.mainNetwork === "ETH"
+  // );
+  // console.log(findedTokenSymbol.coinCode);
 }
 
-//getTokensSupported();
+getTokensSupported();
 
 // How many tokens of "receiveCoinCode" can I get for 1 "depositCoinCode"
 async function exchangeRate(fromToken: string, toToken: string) {
@@ -105,7 +103,7 @@ async function checkStatus() {
   console.log(res.data.data);
 }
 
-checkStatus();
+//checkStatus();
 
 async function estimateGas() {
   // Estimate gas with ethers of a transaction

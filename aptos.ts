@@ -26,7 +26,7 @@ const createdAccountSigningKey = Uint8Array.from([
 ]);
 
 const privateKeyHex =
-  "0x39aba89bb8b4c83124655fb324dbb39c5301c485c762b310b4e54d8348726a4f";
+  "0x39aba89bb8b4c83124655fb324dbb39c5301c485c762b310b4e54d8348726a4f"; // tests without use
 
 const secondAccountSigningKey = Uint8Array.from([
   157, 192, 91, 100, 147, 134, 165, 106, 136, 138, 184, 178, 192, 2, 167, 182,
@@ -42,7 +42,7 @@ async function aptos() {
   // Recovering Account
   const recoveredAccount = new AptosAccount(
     undefined,
-    "0x4799134e3fd9ed3df9d6707a4472a5fb34cf6a01aa656fba20bfd7ffb8b58269"
+    "0x4799134e3fd9ed3df9d6707a4472a5fb34cf6a01aa656fba20bfd7ffb8b58269" // just testing, not using
   );
   //const secondAccount = new AptosAccount(secondAccountSigningKey);
 
