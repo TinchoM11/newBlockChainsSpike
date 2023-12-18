@@ -5,7 +5,7 @@ import { covalentGetERC20Balances, covalentGetNFTBalances } from "./covalentHq";
 import { getDFKTokenPrice } from "./dexScreener";
 dotenv.config();
 
-const PK = process.env.PK as string;
+const DFK_PK = process.env.DFK_PK as string;
 const DFK_RPC = process.env.DFK_RPC_MAINNET as string;
 const provider = new ethers.providers.JsonRpcProvider(DFK_RPC);
 
@@ -20,26 +20,69 @@ const getBalance = async () => {
   console.log(balance.toString());
 };
 
+const sendNativeToken = async () => {
+  console.log("---------- Sending a Transaction of Native Token ----------");
+  const walletWithBalance = new ethers.Wallet(DFK_PK, provider);
+  console.log(
+    "Balance Before Transfer:" +
+      (await walletWithBalance.getBalance()).toString()
+  );
+  const amount = ethers.BigNumber.from("1000000000000000000"); // 1 JEWEL
+  const transaction = {
+    to: "0xc68f118ba14aff63B66d0f7D84c5c9861F5FB862",
+    value: amount,
+  };
+
+  try {
+    const txResponse = await walletWithBalance.sendTransaction(transaction);
+    console.log("Transaction Hash", txResponse.hash);
+  } catch (error) {
+    console.error("Error sending the transaction", error);
+  }
+};
+
+const sendERC20Token = async () => {
+  console.log("---------- Sending a Transaction of ERC20 Token ----------");
+  const walletWithBalance = new ethers.Wallet(DFK_PK, provider);
+  const erc20TokenContractAddress =
+    "0x3AD9DFE640E1A9Cc1D9B0948620820D975c3803a";
+  const erc20TokenContract = new ethers.Contract(
+    erc20TokenContractAddress,
+    ERC20_ABI,
+    walletWithBalance
+  );
+
+  // Dirección del destinatario de la transferencia
+  const toAddress = "0xc68f118ba14aff63B66d0f7D84c5c9861F5FB862"
+
+  const tokenDecimals = await erc20TokenContract.decimals();
+
+  const actualBalance = await erc20TokenContract.balanceOf(
+    walletWithBalance.address
+  );
+  console.log(
+    "Actual Balance of Token:",
+    ethers.utils.formatUnits(actualBalance, tokenDecimals)
+  );
+
+  const amountToTransfer = actualBalance.div(2);
+  const txResponse = await erc20TokenContract.transfer(
+    toAddress,
+    amountToTransfer
+  );
+
+  console.log("Transaction Hash Transfering ERC20 Token", txResponse.hash);
+};
+
 const getTxReceipt = async () => {
   // Get Transaction Receipt:
   const txReceipt = await provider.waitForTransaction(
-    "0x4961daad725532a10e9c5935c846b2be0657f1464edf00d864a1ce541dc80dd4"
+    "0xae98e8609bc247841f7be04db0f5deca20d257cc0b5ca5c2789ad098617aee6d"
   );
   console.log("--------------------");
   console.log("Get  Transaction Receipt:");
   console.log(txReceipt);
 };
-//getTxReceipt();
-
-getBalance();
-covalentGetERC20Balances(
-  "0x0b45626dd99D69C0d2e4fAD518d38d8f139d3478",
-  "defi-kingdoms-mainnet"
-);
-covalentGetNFTBalances(
-  "0x552c036572055541bdDE362A079d264f8a1245F5",
-  "defi-kingdoms-mainnet"
-);
 
 // FUNCTION TO GET SUPPORTED TOKENS IN DFK FROM AVASCAN, NOT WORKING VERY WELL
 // THE METHOD BELOW THIS ONE IS THE ONE WE SHOULD USE
@@ -87,17 +130,16 @@ export async function getDFKTokens() {
   }
 }
 
-// getDFKTokens();
-
 // FUNCTIONS TO GET THE METADATA OF THE MOST IMPORTANT TOKENS IN DFK
 // INVENTORY, GOLD CROPS, RAFFLE, COLLECTIBLES, GOVERNANCE, POWER TOKENS, ECOSYSTEM
 
-const ERC20_ABI = [
+export const ERC20_ABI = [
   // Read-Only Functions
   "function balanceOf(address owner) view returns (uint256)",
   "function decimals() view returns (uint8)",
   "function symbol() view returns (string)",
   "function name() view returns (string)",
+  "function transfer(address to, uint256 amount) returns (bool)",
 ];
 
 const ERC20TokensDFK = [
@@ -161,7 +203,8 @@ const ERC20TokensDFK = [
   // Ecosystem
   "0xCCb93dABD71c8Dad03Fc4CE5559dC3D89F67a260", // JEWEL
   // Other tokens
-  "0xB57B60DeBDB0b8172bb6316a9164bd3C695F133a" // AVAX (if we use it for bridging)
+  "0xB57B60DeBDB0b8172bb6316a9164bd3C695F133a", // AVAX (if we use it for bridging)
+  "0x3AD9DFE640E1A9Cc1D9B0948620820D975c3803a", // USDC (has 18 decimals)
 ];
 
 const getDFKTokenMetadata = async () => {
@@ -207,4 +250,26 @@ const getDFKTokenMetadata = async () => {
   console.log("Without Price:", noPricesTokens);
 };
 
+/// ************************************************* ///
+/// ************************************************* ///
+/// **** UNCOMMENT THE FUNCTION YOU WANT TO TEST **** ///
+/// ************************************************* ///
+/// ************************************************* ///
+
+// getBalance();
+//sendNativeToken();
+//getTxReceipt();
+//sendERC20Token();
+
+covalentGetERC20Balances(
+  "0x0b45626dd99D69C0d2e4fAD518d38d8f139d3478",
+  "defi-kingdoms-mainnet"
+);
+
+// covalentGetNFTBalances(
+//   "0x552c036572055541bdDE362A079d264f8a1245F5",
+//   "defi-kingdoms-mainnet"
+// );
+
 // getDFKTokenMetadata();
+// getDFKTokens();

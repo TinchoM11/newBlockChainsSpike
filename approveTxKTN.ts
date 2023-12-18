@@ -19,12 +19,13 @@ export const ERC20_ABI = [
   "event Transfer(address indexed from, address indexed to, uint amount)",
 ];
 
-export const checkAndSetAllowance = async (
+export const checkAndSetAllowanceKlaytn = async (
   tokenAddress: string,
-  approvalAddress: string
+  approvalAddress: string,
+  amount: BigNumber
 ) => {
-  const DFK_RPC = process.env.DFK_RPC_MAINNET as string;
-  const provider = new ethers.providers.JsonRpcProvider(DFK_RPC);
+  const KTN_RPC = process.env.KLAYTON_RPC_MAINNET as string;
+  const provider = new ethers.providers.JsonRpcProvider(KTN_RPC);
   const DFK_PK = process.env.DFK_PK as string;
   const wallet = new ethers.Wallet(DFK_PK, provider);
 
@@ -35,16 +36,13 @@ export const checkAndSetAllowance = async (
     approvalAddress
   );
 
-  if (allowance.gt(ethers.constants.Zero)) return;
+  if (allowance.gt(amount)) return;
 
   const estimatedGas = await erc20.estimateGas.approve(
     approvalAddress,
     ethers.constants.MaxUint256
   );
-  console.log(`Estimated gas: ${estimatedGas.toString()}`);
-  console.log(`Estimated gas limit: ${estimatedGas.mul(110).div(100)}`);
-  const approvalGas = estimatedGas.mul(110).div(100); // increase in 10% the gas limit
-  const gasPrice = await wallet.getGasPrice();
+
   const approveTx = await erc20.approve(
     approvalAddress,
     ethers.constants.MaxUint256,
